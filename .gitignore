@@ -1,3 +1,5 @@
-clash_group.csv
+.clash_group.csv
 .DS_Store
 test_data/*
+.idea
+venv/

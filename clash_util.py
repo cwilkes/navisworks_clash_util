@@ -1,8 +1,11 @@
 # imports modules
 from xml.etree.ElementTree import parse
+import xml.etree.ElementTree as ET
 from ConfigParser import SafeConfigParser
 import csv
 import argparse
+import sys
+
 
 # pulls in data from .xml file
 arg_parser = argparse.ArgumentParser(description="Group clashes in a Navisworks clash detective XML file.")
@@ -43,7 +46,10 @@ for item in doc.iterfind('batchtest/clashtests/clashtest/summary'):
 # now some detail information about the clashes
 # includes viewpoint, grid-location, and x,y,z location
 for item in doc.iterfind('batchtest/clashtests/clashtest/clashresults/clashresult'):
-    imagefile = item.attrib['href']
+    try:
+        imagefile = item.attrib['href']
+    except:
+        imagefile = 'NA.jpg'
     name = item.attrib['name']
     file_keys = ""
     for plink in item.findall('clashobjects/clashobject/pathlink'):
@@ -79,7 +85,11 @@ for x in parsed_data:
     # based on the precedence in the configuration file we need to attribute
     # this clash to one of the sub systems
     # first separate into two paths
-    path1, path2 = clash1_file_key.split('-')
+    try:
+        path1, path2 = clash1_file_key.split('-')
+    except Exception as ex:
+        #print >>sys.stderr, 'error with parsing clash1_file_key', ex
+        path1, path2 = set(), set()
     # loop through path order.  We could use index, but we want to sub search
     # so doing this the hard way
     found = 0
